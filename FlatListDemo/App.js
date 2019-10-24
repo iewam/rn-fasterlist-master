@@ -35,6 +35,12 @@ export default class App extends React.Component {
                   navigation.navigate('FlatListScreen');
                 }}
             />
+            <Button
+              title={"SectionListScreen"}
+              onPress={()=>{
+                navigation.navigate('SectionListScreen');
+              }}
+            />
           </View>
       );
     }

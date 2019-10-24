@@ -8,6 +8,7 @@ import {name as appName} from './app.json';
 import {createAppContainer} from 'react-navigation';
 import {createStackNavigator} from 'react-navigation-stack';
 import FlatListScreen from './pages/FlatListScreen';
+import SectionListScreen from './pages/SectionListScreen';
 
 const MainStackNav = createStackNavigator({
     App: {
@@ -20,6 +21,12 @@ const MainStackNav = createStackNavigator({
         screen: FlatListScreen,
         navigationOptions: {
             title: 'FlatList',
+        }
+    },
+    SectionListScreen: {
+        screen: SectionListScreen,
+        navigationOptions: {
+            title: 'SectionList',
         }
     }
 }, {
