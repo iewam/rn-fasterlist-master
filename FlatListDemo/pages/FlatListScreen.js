@@ -8,22 +8,23 @@
 
 import React from 'react';
 import {
-  StyleSheet,
-  ScrollView,
-  View,
-  Text,
+    StyleSheet,
+    ScrollView,
+    View,
+    Text,
     FlatList,
     RefreshControl,
+    ActivityIndicator,
 } from 'react-native';
 
 
-const CITY_NAMES = ['北京', '上海', '广州', '深圳','青岛', '济南', '济宁', '成都','重庆', '武汉', '杭州', '苏州','青海', '西安', '拉萨'];
+const CITY_NAMES = ['北京', '上海', '广州', '深圳', '青岛', '济南', '济宁', '成都', '重庆', '武汉', '杭州', '苏州', '青海', '西安', '拉萨'];
 export default class FlatListScreen extends React.Component {
 
     constructor(props) {
         super(props);
 
-        this.state= {
+        this.state = {
             isLoading: false,
             dataArray: CITY_NAMES,
         };
@@ -35,15 +36,23 @@ export default class FlatListScreen extends React.Component {
         </View>;
     }
 
-    _loadData() {
-        this.setState({
-            isLoading: true,
-        });
-        setTimeout(()=>{
+    _loadData(refreshing) {
+        if (refreshing) { // 是下拉刷新
+            this.setState({
+                isLoading: true,
+            });
+        }
+
+        setTimeout(() => {
             let dataArray = [];
-            for (let i = this.state.dataArray.length - 1; i >= 0; i--) {
-                dataArray.push(this.state.dataArray[i]);
+            if (refreshing) {
+                for (let i = this.state.dataArray.length - 1; i >= 0; i--) {
+                    dataArray.push(this.state.dataArray[i]);
+                }
+            } else {
+                dataArray = this.state.dataArray.concat(CITY_NAMES);
             }
+
             this.setState({
                 isLoading: false,
                 dataArray: dataArray,
@@ -51,35 +60,52 @@ export default class FlatListScreen extends React.Component {
         }, 2000);
     }
 
-   render() {
-    return (
-        <View style={styles.container}>
-            <FlatList
-                data={this.state.dataArray}
-                renderItem={(data)=> this._renderItem(data)}
-                // 默认样式下拉刷新
-                // refreshing={this.state.isLoading}
-                // onRefresh={()=>{
-                //     this._loadData();
-                // }}
-
-                //自定义样式下拉刷新
-                refreshControl={
-                    <RefreshControl
-                        title={'Loading'}
-                        colors={['red']}
-                        titleColor={'red'}
-                        tintColor={'orange'}
-                        refreshing={this.state.isLoading}
-                        onRefresh={()=>{
-                            this._loadData();
-                        }}
-                     />
-                }
+    _genFooterIndicator() {
+        console.log(11111111);
+        return <View style={styles.indecatorContainer}>
+            <ActivityIndicator
+                size={'small'}
+                animating={true}
+                color={'orange'}
             />
-        </View>
-    );
-  }
+            <Text style={styles.indicatorTitle}>上拉加载更多</Text>
+        </View>;
+    }
+
+    render() {
+        return (
+            <View style={styles.container}>
+                <FlatList
+                    data={this.state.dataArray}
+                    renderItem={(data) => this._renderItem(data)}
+                    // 默认样式下拉刷新
+                    // refreshing={this.state.isLoading}
+                    // onRefresh={()=>{
+                    //     this._loadData();
+                    // }}
+
+                    //自定义样式下拉刷新
+                    refreshControl={
+                        <RefreshControl
+                            title={'Loading'}
+                            colors={['red']}
+                            titleColor={'red'}
+                            tintColor={'orange'}
+                            refreshing={this.state.isLoading}
+                            onRefresh={() => {
+                                this._loadData(true);
+                            }}
+                        />
+                    }
+                    // 上拉加载组件
+                    ListFooterComponent={() => this._genFooterIndicator()}
+                    onEndReached={()=>{
+                        this._loadData();
+                    }}
+                />
+            </View>
+        );
+    }
 };
 
 
@@ -100,6 +126,14 @@ const styles = StyleSheet.create({
     txt: {
         color: '#fff',
         fontSize: 20,
+    },
+    indecatorContainer: {
+        alignItems: 'center',
+        margin: 10,
+    },
+    indicatorTitle: {
+        color: '#f00',
+        marginTop: 10,
     },
 });
 
