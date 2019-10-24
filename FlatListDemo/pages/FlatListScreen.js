@@ -57,10 +57,25 @@ export default class FlatListScreen extends React.Component {
             <FlatList
                 data={this.state.dataArray}
                 renderItem={(data)=> this._renderItem(data)}
-                refreshing={this.state.isLoading}
-                onRefresh={()=>{
-                    this._loadData();
-                }}
+                // 默认样式下拉刷新
+                // refreshing={this.state.isLoading}
+                // onRefresh={()=>{
+                //     this._loadData();
+                // }}
+
+                //自定义样式下拉刷新
+                refreshControl={
+                    <RefreshControl
+                        title={'Loading'}
+                        colors={['red']}
+                        titleColor={'red'}
+                        tintColor={'orange'}
+                        refreshing={this.state.isLoading}
+                        onRefresh={()=>{
+                            this._loadData();
+                        }}
+                     />
+                }
             />
         </View>
     );
